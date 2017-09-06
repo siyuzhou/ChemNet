@@ -1,0 +1,7 @@
+# C++ object and output files
+*.a
+*.out
+*.o
+
+# IDE
+.vscode
