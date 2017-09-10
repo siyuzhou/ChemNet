@@ -7,9 +7,9 @@ SDIR = src
 IDIR = include
 DEPS = $(addprefix $(IDIR)/, reaction.hpp species.hpp)
 
-CC = g++
-CFLAGS = -w -c -I $(IDIR)
-LFLAGS = -w
+CC = g++ -std=c++11
+CFLAGS = -c -I $(IDIR)
+LFLAGS = 
 
 
 $(EXEC): $(OBJS)
