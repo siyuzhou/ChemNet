@@ -1,13 +1,11 @@
 #include <string>
-#include <vector>
+#include <deque>
 #include <map>
 #include <iterator>
 #include "reaction.hpp"
 
-Reaction::Reaction(const std::vector<Species *> &r, const std::vector<Species *> &p, float fr, float br, const std::string n, const std::string c) : name(n), chemistry(c)
+Reaction::Reaction(const std::deque<Species *> &r, const std::deque<Species *> &p, float fr, float br, const std::string n, const std::string c) : reactants(r.begin(), r.end()), products(p.begin(), p.end()), name_(n), chemistry_(c)
 {
-  reactants = r;
-  products = p;
   rateForward = fr;
   rateBackward = br;
 }
@@ -23,10 +21,10 @@ const std::map<std::string, float> Reaction::changeConcentration(float dt)
 
   std::map<std::string, float> changes;
   for (auto const &reactantPtr : reactants)
-    changes[reactantPtr->getName()] = dt * (backwardRate() * totalConcProducts - forwardRate() * totalConcReactants - reactantPtr->getDecay() * reactantPtr->getConcentration() + reactantPtr->getInflow());
+    changes[reactantPtr->name()] = dt * (backwardRate() * totalConcProducts - forwardRate() * totalConcReactants - reactantPtr->getDecay() * reactantPtr->getConcentration() + reactantPtr->getInflow());
 
   for (auto const &productPtr : products)
-    changes[productPtr->getName()] = dt * (forwardRate() * totalConcReactants - backwardRate() * totalConcReactants - productPtr->getDecay() * productPtr->getConcentration() + productPtr->getInflow());
+    changes[productPtr->name()] = dt * (forwardRate() * totalConcReactants - backwardRate() * totalConcReactants - productPtr->getDecay() * productPtr->getConcentration() + productPtr->getInflow());
 
   return changes;
 }
@@ -34,19 +32,19 @@ const std::map<std::string, float> Reaction::changeConcentration(float dt)
 void Reaction::update(const std::map<std::string, float> &concChanges)
 {
   float newConcentration;
-  for (auto const &reactantPtr : reactants)
+  for (auto &reactantPtr : reactants)
   {
-    newConcentration = reactantPtr->getConcentration() + concChanges.at(reactantPtr->getName());
+    newConcentration = reactantPtr->getConcentration() + concChanges.at(reactantPtr->name());
     if (newConcentration < 0)
       newConcentration = 0;
     reactantPtr->setConcentration(newConcentration);
   }
-  for (auto const &productPtr : products)
+  for (auto &productPtr : products)
   {
-    newConcentration = productPtr->getConcentration() + concChanges.at(productPtr->getName());
+    newConcentration = productPtr->getConcentration() + concChanges.at(productPtr->name());
     if (newConcentration < 0)
       newConcentration = 0;
-    productPtr->setConcentration(productPtr->getConcentration() + concChanges.at(productPtr->getName()));
+    productPtr->setConcentration(productPtr->getConcentration() + concChanges.at(productPtr->name()));
   }
 }
 
@@ -67,6 +65,48 @@ float Reaction::backwardRate()
   return rateBackward;
 }
 
-const std::vector<Species *> &Reaction::getReactants() const { return reactants; }
+const std::string &Reaction::name() const { return name_; }
 
-const std::vector<Species *> &Reaction::getProducts() const { return products; }
+const std::string &Reaction::type() const { return chemistry_; }
+
+const std::deque<Species *> &Reaction::allReactants() const { return reactants; }
+
+const std::deque<Species *> &Reaction::allProducts() const { return products; }
+
+const int Reaction::numReactants() const { return reactants.size(); }
+
+const int Reaction::numProducts() const { return products.size(); }
+
+bool Reaction::hasReactant(Species &species) const
+{
+  for (const auto &reactantPtr : reactants)
+    if (*reactantPtr == species)
+      return true;
+
+  return false;
+}
+
+bool Reaction::hasProduct(Species &species) const
+{
+  for (const auto &productPtr : products)
+    if (*productPtr == species)
+      return true;
+
+  return false;
+}
+
+bool Reaction::operator==(const Reaction &reaction) const
+{
+  if ((this->numProducts() != reaction.numProducts()) || this->numReactants() != reaction.numReactants())
+    return false;
+
+  for (const auto &reactantPtr : reactants)
+    if (!reaction.hasReactant(*reactantPtr))
+      return false;
+
+  for (const auto &productPtr : products)
+    if (!reaction.hasProduct(*productPtr))
+      return false;
+
+  return true;
+}

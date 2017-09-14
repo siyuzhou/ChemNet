@@ -1,5 +1,5 @@
-#ifndef SPECIES_H
-#define SPECIES_H
+#ifndef SPECIES_HPP
+#define SPECIES_HPP
 
 #include <string>
 
@@ -9,7 +9,7 @@ public:
   Species();
   Species(std::string, float, float, float, float = 0.);
 
-  const std::string &getName() const;
+  const std::string &name() const;
   float getPotential() const;
   float getConcentration() const;
   float getDecay() const;
@@ -20,8 +20,10 @@ public:
   void setDecay(float);
   void setInflow(float);
 
+  bool operator==(const Species &) const;
+
 private:
-  std::string name;
+  const std::string name_;
   float potential;
   float concentration;
   float decay;

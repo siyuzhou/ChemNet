@@ -1,21 +1,25 @@
-#ifndef REACTION_H
-#define REACTION_H
+#ifndef REACTION_HPP
+#define REACTION_HPP
 
 #include <string>
-#include <vector>
+#include <deque>
 #include <map>
 #include "species.hpp"
 
 class Reaction
 {
 public:
-  const std::string chemistry;
-  const std::string name;
+  Reaction(const std::deque<Species *> &, const std::deque<Species *> &, float = 0., float = 0., const std::string = "", const std::string = "");
 
-  Reaction(const std::vector<Species *> &, const std::vector<Species *> &, float = 0., float = 0., const std::string = "", const std::string = "");
+  const std::string &name() const;
+  const std::string &type() const;
+  const std::deque<Species *> &allReactants() const;
+  const std::deque<Species *> &allProducts() const;
+  const int numReactants() const;
+  const int numProducts() const;
 
-  const std::vector<Species *> &getReactants() const;
-  const std::vector<Species *> &getProducts() const;
+  bool hasReactant(Species &) const;
+  bool hasProduct(Species &) const;
 
   float forwardRate();
   float backwardRate();
@@ -23,9 +27,13 @@ public:
   void update(const std::map<std::string, float> &);
   void react(float);
 
+  bool operator==(const Reaction &) const;
+
 private:
-  std::vector<Species *> reactants;
-  std::vector<Species *> products;
+  const std::string chemistry_;
+  const std::string name_;
+  const std::deque<Species *> reactants;
+  const std::deque<Species *> products;
   float rateForward, rateBackward;
 };
 
