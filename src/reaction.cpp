@@ -4,6 +4,8 @@
 #include <iterator>
 #include "reaction.hpp"
 
+Reaction::Reaction() {}
+
 Reaction::Reaction(const std::deque<Species *> &r, const std::deque<Species *> &p, float fr, float br, const std::string n, const std::string c) : reactants(r.begin(), r.end()), products(p.begin(), p.end()), name_(n), chemistry_(c)
 {
   rateForward = fr;

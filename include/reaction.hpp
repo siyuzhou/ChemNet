@@ -9,6 +9,7 @@
 class Reaction
 {
 public:
+  Reaction();
   Reaction(const std::deque<Species *> &, const std::deque<Species *> &, float = 0., float = 0., const std::string = "", const std::string = "");
 
   const std::string &name() const;
