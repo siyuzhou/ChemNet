@@ -1,26 +1,29 @@
-#ifndef SPECIES_H
-#define SPECIES_H
+#ifndef SPECIES_HPP
+#define SPECIES_HPP
 
 #include <string>
 
 class Species
 {
 public:
+  Species();
   Species(std::string, float, float, float, float = 0.);
 
-  std::string getFormula();
-  float getPotential();
-  float getConcentration();
-  float getInflow();
-  float getDecay();
+  const std::string &name() const;
+  float getPotential() const;
+  float getConcentration() const;
+  float getDecay() const;
+  float getInflow() const;
 
-  void setPotential(float p);
-  void setConcentration(float c);
-  void setInflow(float i);
-  void setDecay(float d);
+  void setPotential(float);
+  void setConcentration(float);
+  void setDecay(float);
+  void setInflow(float);
+
+  bool operator==(const Species &) const;
 
 private:
-  std::string formula;
+  const std::string name_;
   float potential;
   float concentration;
   float decay;

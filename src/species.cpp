@@ -1,38 +1,19 @@
 #include "species.hpp"
 #include <string>
 
-Species::Species(std::string f, float p, float c, float d, float i)
+Species::Species() {}
+
+Species::Species(std::string n, float p, float c, float d, float i) : name_(n)
 {
-  formula = f;
-  setPotential(p);
-  setConcentration(c);
-  setDecay(d);
-  setInflow(i);
+  potential = p;
+  concentration = c;
+  decay = d;
+  inflow = i;
 }
 
-std::string Species::getFormula()
+void Species::setConcentration(float c)
 {
-  return formula;
-}
-
-float Species::getPotential()
-{
-  return potential;
-}
-
-float Species::getConcentration()
-{
-  return concentration;
-}
-
-float Species::getInflow()
-{
-  return inflow;
-}
-
-float Species::getDecay()
-{
-  return decay;
+  concentration = (c > 0) ? c : 0;
 }
 
 void Species::setPotential(float p)
@@ -40,9 +21,9 @@ void Species::setPotential(float p)
   potential = p;
 }
 
-void Species::setConcentration(float c)
+void Species::setDecay(float d)
 {
-  concentration = c;
+  decay = (d > 0) ? d : 0;
 }
 
 void Species::setInflow(float i)
@@ -50,7 +31,13 @@ void Species::setInflow(float i)
   inflow = i;
 }
 
-void Species::setDecay(float d)
+float Species::getConcentration() const { return concentration; }
+float Species::getPotential() const { return potential; }
+float Species::getDecay() const { return decay; }
+float Species::getInflow() const { return inflow; }
+const std::string &Species::name() const { return name_; }
+
+bool Species::operator==(const Species &species) const
 {
-  decay = d;
+  return (name_ == species.name_);
 }
